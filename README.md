@@ -84,22 +84,6 @@ Game Caro AI sử dụng nhiều thuật toán AI tiên tiến để cung cấp 
 - Đánh giá vị trí chiến lược và tiềm năng tấn công/phòng thủ
 - Học từ dữ liệu ván đấu trước đó
 
-## Đóng góp
 
-Chúng tôi luôn chào đón đóng góp từ cộng đồng! Nếu bạn muốn cải thiện Game Caro AI:
 
-1. Fork repository
-2. Tạo nhánh tính năng mới (`git checkout -b feature/amazing-feature`)
-3. Commit thay đổi của bạn (`git commit -m 'Add some amazing feature'`)
-4. Push lên nhánh của bạn (`git push origin feature/amazing-feature`)
-5. Mở Pull Request
 
-## Giấy phép
-
-Dự án này được phân phối dưới giấy phép MIT. Xem file `LICENSE` để biết thêm chi tiết.
-
-## Liên hệ
-
-Tên của bạn - [@twitter_handle](https://twitter.com/twitter_handle) - email@example.com
-
-Project Link: [https://github.com/username/caro-ai-game](https://github.com/username/caro-ai-game)
