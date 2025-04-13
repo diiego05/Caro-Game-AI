@@ -228,21 +228,21 @@ def draw(this_game: caro.Caro, this_screen):
                 int(MARGIN + (MARGIN + HEIGHT) * row + HEIGHT / 2)
             )
             
+            # Tính toán vị trí để vẽ hình ảnh
+            img_pos = (
+                int(MARGIN + (MARGIN + WIDTH) * column),
+                int(MARGIN + (MARGIN + HEIGHT) * row)
+            )
+            
             if this_game.grid[row][column] == 'X':
-                # Draw X piece
-                pygame.draw.line(this_screen, (0, 0, 0), 
-                                 (center[0] - WIDTH/3, center[1] - WIDTH/3), 
-                                 (center[0] + WIDTH/3, center[1] + WIDTH/3), 
-                                 3)
-                pygame.draw.line(this_screen, (0, 0, 0), 
-                                 (center[0] + WIDTH/3, center[1] - WIDTH/3), 
-                                 (center[0] - WIDTH/3, center[1] + WIDTH/3), 
-                                 3)
+                # Sử dụng hình ảnh X thay vì vẽ
+                this_screen.blit(x_img, img_pos)
             
             elif this_game.grid[row][column] == 'O':
-                # Draw O piece
-                pygame.draw.circle(this_screen, (255, 255, 255), center, WIDTH / 2 - 2)
-                pygame.draw.circle(this_screen, (0, 0, 0), center, WIDTH / 2 - 4, 2)
+                # Sử dụng hình ảnh O thay vì vẽ
+                this_screen.blit(o_img, img_pos)
+
+
     
     # Highlight last move
     if len(this_game.last_move) > 0:
