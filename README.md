@@ -62,7 +62,11 @@ caro-ai-game/
 │     
 ├── Buttons.py
 │   
-└── agent.py            
+└── agent.py
+│ 
+└── settings.py
+│   
+└── menu.py            
 ```
 
 ## Thuật toán AI
