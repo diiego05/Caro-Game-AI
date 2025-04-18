@@ -219,7 +219,7 @@ class Agent:
             game, self.max_depth, -INF * 10, INF * 10)
 
         return best_move
-
+        
     def minimax(self, game: Caro, depth: int, alpha: int, beta: int, maximizing_player: int = 1) -> tuple[int, list[int]]:
         '''
             Implement the Minimax algorithm.
@@ -293,7 +293,54 @@ class Agent:
                     break
             return min_eval, best_move
 
-
+    def get_cost(self, game: Caro, x: int, y: int) -> int:
+        center_x, center_y = game.rows // 2, game.cols // 2
+    
+        opponent = 'O' if self.XO == 'X' else 'X'
+        threat_level = 0
+    
+        temp_game_opponent = copy.deepcopy(game)
+        temp_game_opponent.XO = opponent
+        temp_game_opponent.make_move(x, y)
+    
+        threat_heuristic = self.compute(temp_game_opponent.get_all_rows()) + \
+                           self.compute(temp_game_opponent.get_all_colummns()) + \
+                           self.compute(temp_game_opponent.get_all_diagonals())
+    
+        if threat_heuristic > 500000:
+            threat_level += 500000 - threat_heuristic
+    
+        distance_to_center = abs(x - center_x) + abs(y - center_y)
+    
+        # Tính khoảng cách đến quân cờ gần nhất (đã đánh)
+        min_distance_to_any_piece = float('inf')
+        for i in range(game.rows):
+            for j in range(game.cols):
+                if game.board[i][j] != '.':  # đã đánh
+                    dist = abs(x - i) + abs(y - j)
+                    if dist < min_distance_to_any_piece:
+                        min_distance_to_any_piece = dist
+    
+        # Nếu không có quân nào trên bàn (trường hợp đầu tiên), thì coi như max khoảng cách
+        if min_distance_to_any_piece == float('inf'):
+            min_distance_to_any_piece = 0
+    
+        cost = (
+            distance_to_center * 10 +       # gần trung tâm
+            threat_level +                  # ưu tiên chặn nguy cơ
+            min_distance_to_any_piece * 5   # càng gần các ô đã đánh càng tốt
+        )
+        return cost
+        
+    def ucs(self, game: Caro) -> list[int]:
+        possible_moves = self.get_possible_moves_optimized(game)
+        pq = PriorityQueue()
+        for move in possible_moves:
+            x, y = move
+            cost = self.get_cost(game, x, y)
+            pq.put((cost, [x, y]))
+        _, best_move = pq.get()
+        return best_move
 # Testing
 
 if __name__ == '__main__':
