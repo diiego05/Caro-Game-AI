@@ -341,6 +341,26 @@ class Agent:
             pq.put((cost, [x, y]))
         _, best_move = pq.get()
         return best_move
+    
+    def greedy(self, game: Caro) -> list[int]:
+        possible_moves = self.get_possible_moves_optimized(game)
+        best_move = None
+        best_score = -INF
+        
+        for move in possible_moves:
+            x, y = move
+            game.grid[x][y] = self.XO
+            score = self.get_heuristic(game)
+            game.grid[x][y] = '.'  
+            if score > best_score:
+                best_score = score
+                best_move = [x, y]
+        
+       
+        if best_move is None:
+            return [game.ROWNUM // 2, game.COLNUM // 2] 
+        return best_move
+    
 # Testing
 
 if __name__ == '__main__':
