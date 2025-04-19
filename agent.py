@@ -26,18 +26,19 @@ dy = [1, -1, 0, 1, -1, 0, 1, -1]
 
 class Agent:
 
-    def __init__(self, max_depth: int, XO: str) -> None:
+     def __init__(self, max_depth: int, XO: str, algorithm: str = 'minimax') -> None:
         '''
-            Parameters
+        Parameters
             ----------------
-            max_depth: Maximum depth for the Minimax tree 
+            max_depth: Maximum depth for the Minimax tree
             XO: 'X' or 'O', depend on the agent's turn
-
+            algorithm: The algorithm to use ('minimax', 'greedy', 'ucs', 'genetic')
         '''
         self.max_depth = max_depth
         self.XO = XO
+        self.algorithm = algorithm.lower()
 
-        print("max_depth:", max_depth, "; XO:", XO)
+        print(f"max_depth: {max_depth}; XO: {XO}; algorithm: {algorithm}")
 
     def get_possible_moves_optimized(self, game: Caro) -> list[list[int]]:
         visited = [[0 for _ in range(game.cols)] for _ in range(game.rows)]
