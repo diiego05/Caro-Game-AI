@@ -361,7 +361,48 @@ class Agent:
         if best_move is None:
             return [game.ROWNUM // 2, game.COLNUM // 2] 
         return best_move
-    
+         
+    def genetic(self, game: Caro, population_size: int = 10, generations: int = 50, mutation_rate: float = 0.1) -> list[int]:
+        '''
+            Implement a genetic algorithm to find the best move.
+            Parameters
+            -----------
+            game: The Caro object, representing the current state of the game.
+            population_size: Number of individuals in the population.
+            generations: Number of generations to evolve.
+            mutation_rate: Probability of mutation.
+            Return
+            --------
+            The best move coordinate.
+        '''
+        def initialize_population():
+            return [random.choice(self.get_possible_moves_optimized(game)) for _ in range(population_size)]
+
+        def fitness(move):
+            x, y = move
+            new_game = copy.deepcopy(game)
+            new_game.make_move(x, y)
+            return self.get_heuristic(new_game)
+
+        def crossover(parent1, parent2):
+            return random.choice([parent1, parent2])
+
+        def mutate(move):
+            if random.random() < mutation_rate:
+                return random.choice(self.get_possible_moves_optimized(game))
+            return move
+
+        population = initialize_population()
+        for _ in range(generations):
+            population = sorted(population, key=fitness, reverse=True)
+            next_generation = population[:population_size // 2]
+            while len(next_generation) < population_size:
+                parent1, parent2 = random.sample(next_generation, 2)
+                child = crossover(parent1, parent2)
+                child = mutate(child)
+                next_generation.append(child)
+            population = next_generation
+        return max(population, key=fitness)
 # Testing
 
 if __name__ == '__main__':
