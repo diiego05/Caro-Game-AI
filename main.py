@@ -77,9 +77,16 @@ def main():
                 run_main_game(my_game)
 
 def run_main_game(my_game):
-    agent = Agent(max_depth=my_game.hard_ai, XO=my_game.get_current_XO_for_AI())
-    agent1 = Agent(max_depth=dev_mode_setup['ai_1_depth'], XO=dev_mode_setup['ai_1'])
-    agent2 = Agent(max_depth=dev_mode_setup['ai_2_depth'], XO=dev_mode_setup['ai_2'])
+    difficulty = my_game.hard_ai
+    if difficulty == 1:
+        algorithm = "greedy"
+    elif difficulty == 2:
+        algorithm = "ucs"
+    elif difficulty == 3:
+        algorithm = "minimax"
+    agent = Agent(max_depth=my_game.hard_ai, XO=my_game.get_current_XO_for_AI(),algorithm=algorithm)
+    agent1 = Agent(max_depth=dev_mode_setup['ai_1_depth'], XO=dev_mode_setup['ai_1'],algorithm=algorithm)  
+    agent2 = Agent(max_depth=dev_mode_setup['ai_2_depth'], XO=dev_mode_setup['ai_2'],algorithm= algorithm)
 
     Window_size = [1280, 720]
     my_len_min = min(900/COLNUM, (720) / ROWNUM)
@@ -324,7 +331,7 @@ def run_main_game(my_game):
                     my_game.use_ai(True)
                     aivp_btn.disable_button()
                     pvp_btn.enable_button()
-                    agent = Agent(max_depth=my_game.hard_ai, XO=my_game.get_current_XO_for_AI())
+                    agent = Agent(max_depth=my_game.hard_ai, XO=my_game.get_current_XO_for_AI(),algorithm = algorithm)
                 if ai_thinking_btn.draw(Screen):
                     pass
                 if event.type == pygame.QUIT:
