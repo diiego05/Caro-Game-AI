@@ -81,7 +81,7 @@ def run_main_game(my_game):
     if difficulty == 1:
         algorithm = "greedy"
     elif difficulty == 2:
-        algorithm = "ucs"
+        algorithm = "genetic"
     elif difficulty == 3:
         algorithm = "minimax"
     agent = Agent(max_depth=my_game.hard_ai, XO=my_game.get_current_XO_for_AI(),algorithm=algorithm)
@@ -118,6 +118,8 @@ def run_main_game(my_game):
         path + '/player_vs_player_gray.jpg').convert_alpha(), (105, 105))
     aivp_img = pygame.transform.smoothscale(pygame.image.load(
         path + '/ai_vs_player.jpg').convert_alpha(), (105, 105))
+    aivai_img = pygame.transform.smoothscale(pygame.image.load(
+        path + '/ai_vs_ai.png').convert_alpha(), (105, 105))
     aivp_img_gray = pygame.transform.smoothscale(pygame.image.load(
         path + '/ai_vs_player_gray.jpg').convert_alpha(), (105, 105))
     ai_thinking_img = pygame.transform.smoothscale(pygame.image.load(
@@ -137,7 +139,10 @@ def run_main_game(my_game):
         1020, 30, ai_thinking_img, ai_thinking_img_gray, 0.8)
     pvp_btn = button.Button(1075, 145, pvp_img, pvp_img_gray, 0.8)
     aivp_btn = button.Button(970, 145, aivp_img, aivp_img_gray, 0.8)
+    aivai_btn = button.Button(1020, 250, aivai_img, aivp_img_gray, 0.8)
+    """ 
     logo_btn = button.Button(990, 660, logo_img, logo_img, 0.6)
+    """
 
     if my_game.is_use_ai:
         aivp_btn.disable_button()
@@ -163,7 +168,7 @@ def run_main_game(my_game):
         font = pygame.font.Font('freesansbold.ttf', 36)
         text = font.render('By AI - nhóm 12', True, WHITE, BLACK)
         textRect = text.get_rect()
-        textRect.center = (1100, 700)
+        textRect.center = (1050, 700)
         Screen.blit(text, textRect)
         if is_developer_mode:
             font = pygame.font.Font('freesansbold.ttf', 36)
@@ -293,6 +298,20 @@ def run_main_game(my_game):
             textRect.center = (int(Window_size[0]/2), int(Window_size[1]/2))
             Screen.blit(text, textRect)
 
+    def draw_labels(ai_1_algorithm, ai_2_algorithm):
+        font = pygame.font.Font('freesansbold.ttf', 20)
+        # Label for AI 1 (X)
+        ai_1_label = font.render(f"X: {ai_1_algorithm}", True, WHITE)  # Xóa tham số nền
+        ai_1_label_rect = ai_1_label.get_rect()
+        ai_1_label_rect.center = (aivai_btn.rect.left - 100, aivai_btn.rect.centery)
+        Screen.blit(ai_1_label, ai_1_label_rect)
+
+        # Label for AI 2 (O)
+        ai_2_label = font.render(f"O: {ai_2_algorithm}", True, WHITE)  # Xóa tham số nền
+        ai_2_label_rect = ai_2_label.get_rect()
+        ai_2_label_rect.center = (aivai_btn.rect.right + 100, ai_2_label_rect.centery + 280)
+        Screen.blit(ai_2_label, ai_2_label_rect)
+
     # Thực hiện nước đi đầu tiên của AI nếu được chọn
     if my_game.is_use_ai and my_game.ai_turn == 1 and len(my_game.last_move) == 0:
         best_move = agent.get_move(my_game)
@@ -307,7 +326,31 @@ def run_main_game(my_game):
             if replay_button.draw(Screen):
                 my_game.reset()
                 re_draw()
-                # Áp dụng lại nước đi đầu tiên của AI nếu cần
+
+                # Reinitialize buttons
+                start_button = button.Button(970, 200, start_img, start_img, 0.8)
+                replay_button = button.Button(970, 575, replay_img, replay_img, 0.8)
+                exit_button = button.Button(970, 485, exit_img, exit_img, 0.8)
+                undo_button = button.Button(970, 395, undo_img, undo_img, 0.8)
+                ai_thinking_btn = button.Button(1020, 30, ai_thinking_img, ai_thinking_img_gray, 0.8)
+                pvp_btn = button.Button(1075, 145, pvp_img, pvp_img_gray, 0.8)
+                aivp_btn = button.Button(970, 145, aivp_img, aivp_img_gray, 0.8)
+                aivai_btn = button.Button(1020, 250, aivai_img, aivp_img_gray, 0.8)
+
+                # Reinitialize agents for AI vs AI mode
+                if aivai_btn.is_disable:
+                    agent1 = Agent(max_depth=dev_mode_setup['ai_1_depth'], XO=dev_mode_setup['ai_1'], algorithm=ai_1_algorithm)
+                    agent2 = Agent(max_depth=dev_mode_setup['ai_2_depth'], XO=dev_mode_setup['ai_2'], algorithm=ai_2_algorithm)
+                    # Automatically let AI play against each other
+                    while my_game.get_winner() == -1:
+                        if my_game.turn == 1:
+                            best_move = agent1.get_move(my_game)
+                        else:
+                            best_move = agent2.get_move(my_game)
+                        my_game.make_move(best_move[0], best_move[1])
+                        draw(my_game, Screen)
+                        pygame.display.update()
+                # Apply the first AI move if needed
                 if my_game.is_use_ai and my_game.ai_turn == 1:
                     best_move = agent.get_move(my_game)
                     my_game.make_move(best_move[0], best_move[1])
@@ -332,6 +375,109 @@ def run_main_game(my_game):
                     aivp_btn.disable_button()
                     pvp_btn.enable_button()
                     agent = Agent(max_depth=my_game.hard_ai, XO=my_game.get_current_XO_for_AI(),algorithm = algorithm)
+                    
+                if aivai_btn.draw(Screen):
+                    # Display combo boxes to select algorithms for AI 1 and AI 2
+                    import tkinter as tk
+                    from tkinter import ttk
+                    from PIL import Image, ImageTk
+
+                    root = tk.Tk()
+                    root.withdraw()  # Hide the root window
+
+                    # Create a new window for combo boxes
+                    combo_window = tk.Toplevel(root)
+                    combo_window.title("Select AI Algorithms")
+
+                    bg_image = Image.open(r"D:\Trí tuệ nhân tạo\ABC\Caro-Game-AI\Caro-Game-AI\asset\background1.jpg")
+                    bg_photo = ImageTk.PhotoImage(bg_image)
+                    bg_label = tk.Label(combo_window, image=bg_photo)
+                    bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+                    background_label = tk.Label(combo_window, image=bg_photo)
+                    background_label.place(x=0, y=0, relwidth=1, relheight=1)
+                    pixel_font = ("Courier New", 12, "bold")
+                    label_fg = "#00FFFF"
+
+                    window_bg = "#000000"  # Replace with a valid color code (e.g., black)
+                    # Center the window on the screen
+                    window_width, window_height = 300, 300
+                    screen_width = combo_window.winfo_screenwidth()
+                    screen_height = combo_window.winfo_screenheight()
+                    x_position = (screen_width // 2) - (window_width // 2)
+                    y_position = (screen_height // 2) - (window_height // 2)
+                    combo_window.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
+
+                    # Options for algorithms
+                    algorithms = ["greedy", "genetic", "minimax"]
+
+                    # Create a frame for better organization
+                    frame = tk.Frame(combo_window, bg="#1E1E1E")  # Nền tối giống menu chính
+                    frame.place(relx=0.5, rely=0.5, anchor="center", width=300, height=250)
+
+                    # Title label
+                    tk.Label(frame, text="Select AI Algorithms", font=("Courier New", 16, "bold"), fg="#00FFFF", bg="#1E1E1E").pack(pady=10)
+
+                    # AI 1 Algorithm
+                    tk.Label(frame, text="AI 1 Algorithm (X):", font=("Courier New", 12, "bold"), fg="#00FF00", bg="#1E1E1E").pack(anchor="w", padx=20, pady=5)
+                    ai_1_combo = ttk.Combobox(frame, values=algorithms, state="readonly", font=("Courier New", 12))
+                    ai_1_combo.set("minimax")
+                    ai_1_combo.pack(fill="x", padx=20, pady=5)
+
+                    # AI 2 Algorithm
+                    tk.Label(frame, text="AI 2 Algorithm (O):", font=("Courier New", 12, "bold"), fg="#FF4500", bg="#1E1E1E").pack(anchor="w", padx=20, pady=5)
+                    ai_2_combo = ttk.Combobox(frame, values=algorithms, state="readonly", font=("Courier New", 12))
+                    ai_2_combo.set("minimax")
+                    ai_2_combo.pack(fill="x", padx=20, pady=5)
+
+                    def on_submit():
+                        nonlocal ai_1_algorithm, ai_2_algorithm
+                        ai_1_algorithm = ai_1_combo.get()
+                        ai_2_algorithm = ai_2_combo.get()
+                        combo_window.destroy()
+
+                    # Submit button
+                    submit_btn = tk.Button(frame, text="Submit", command=on_submit, font=("Courier New", 12, "bold"), bg="#444", fg="white",
+                                            activebackground="#00FFFF", activeforeground="black", relief="raised", bd=3)
+                    submit_btn.pack(pady=15)
+
+                    root.wait_window(combo_window)
+
+                    # Validate input and set default values if invalid
+                    valid_algorithms = {"greedy", "genetic", "minimax"}
+                    if ai_1_algorithm not in valid_algorithms:
+                        ai_1_algorithm = "minimax"
+                    if ai_2_algorithm not in valid_algorithms:
+                        ai_2_algorithm = "minimax"
+
+                    my_game.use_ai(True)
+                    aivai_btn.disable_button()
+                    aivp_btn.enable_button()
+                    pvp_btn.enable_button()
+                    dev_mode_setup['start'] = True
+                    ai_thinking_btn.enable_button()
+                    agent1 = Agent(
+                        max_depth=3 if ai_1_algorithm == "minimax" else dev_mode_setup['ai_1_depth'],
+                        XO=dev_mode_setup['ai_1'],
+                        algorithm=ai_1_algorithm
+                    )
+                    agent2 = Agent(
+                        max_depth=3 if ai_2_algorithm == "minimax" else dev_mode_setup['ai_2_depth'],
+                        XO=dev_mode_setup['ai_2'],
+                        algorithm=ai_2_algorithm
+                    )
+
+                    # Draw labels after algorithms are selected
+                    draw_labels(ai_1_algorithm, ai_2_algorithm)
+
+                    # Automatically let AI play against each other
+                    while my_game.get_winner() == -1:
+                        if my_game.turn == 1:
+                            best_move = agent1.get_move(my_game)
+                        else:
+                            best_move = agent2.get_move(my_game)
+                        my_game.make_move(best_move[0], best_move[1])
+                        draw(my_game, Screen)
+                        pygame.display.update()
                 if ai_thinking_btn.draw(Screen):
                     pass
                 if event.type == pygame.QUIT:
