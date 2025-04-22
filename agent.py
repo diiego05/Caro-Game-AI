@@ -1,7 +1,7 @@
 from caro import Caro
 import copy
 import random
-from queue import PriorityQueue
+
 TWO = 10
 TWO_OBSTACLE = 5
 THREE = 1000
@@ -261,7 +261,7 @@ class Agent:
                 new_game.make_move(x, y)
 
                 eval, move = self.minimax(new_game, depth - 1,
-                                        alpha, beta, maximizing_player ^ 1)
+                                          alpha, beta, maximizing_player ^ 1)
 
                 if eval > max_eval:
                     max_eval = eval
@@ -283,7 +283,7 @@ class Agent:
                 new_game.make_move(x, y)
 
                 eval, move = self.minimax(new_game, depth - 1,
-                                        alpha, beta, maximizing_player ^ 1)
+                                          alpha, beta, maximizing_player ^ 1)
 
                 if eval < min_eval:
                     min_eval = eval
@@ -294,55 +294,8 @@ class Agent:
                     break
             return min_eval, best_move
 
-    def get_cost(self, game: Caro, x: int, y: int) -> int:
-        center_x, center_y = game.rows // 2, game.cols // 2
-
-        opponent = 'O' if self.XO == 'X' else 'X'
-        threat_level = 0
-
-        temp_game_opponent = copy.deepcopy(game)
-        temp_game_opponent.XO = opponent
-        temp_game_opponent.make_move(x, y)
-
-        threat_heuristic = self.compute(temp_game_opponent.get_all_rows()) + \
-                        self.compute(temp_game_opponent.get_all_colummns()) + \
-                        self.compute(temp_game_opponent.get_all_diagonals())
-
-        if threat_heuristic > 500000:
-            threat_level += 500000 - threat_heuristic
-
-        distance_to_center = abs(x - center_x) + abs(y - center_y)
-
-        # Tính khoảng cách đến quân cờ gần nhất (đã đánh)
-        min_distance_to_any_piece = float('inf')
-        for i in range(game.rows):
-            for j in range(game.cols):
-                if game.board[i][j] != '.':  # đã đánh
-                    dist = abs(x - i) + abs(y - j)
-                    if dist < min_distance_to_any_piece:
-                        min_distance_to_any_piece = dist
-
-        # Nếu không có quân nào trên bàn (trường hợp đầu tiên), thì coi như max khoảng cách
-        if min_distance_to_any_piece == float('inf'):
-            min_distance_to_any_piece = 0
-
-        cost = (
-            distance_to_center * 10 +       # gần trung tâm
-            threat_level +                  # ưu tiên chặn nguy cơ
-            min_distance_to_any_piece * 5   # càng gần các ô đã đánh càng tốt
-        )
-        return cost
-        
-    def ucs(self, game: Caro) -> list[int]:
-        possible_moves = self.get_possible_moves_optimized(game)
-        pq = PriorityQueue()
-        for move in possible_moves:
-            x, y = move
-            cost = self.get_cost(game, x, y)
-            pq.put((cost, [x, y]))
-        _, best_move = pq.get()
-        return best_move
-
+   
+    
     def greedy(self, game: Caro) -> list[int]:
         possible_moves = self.get_possible_moves_optimized(game)
         best_move = None
@@ -357,11 +310,11 @@ class Agent:
                 best_score = score
                 best_move = [x, y]
         
-
+       
         if best_move is None:
             return [game.ROWNUM // 2, game.COLNUM // 2] 
         return best_move
-        
+    
     def genetic(self, game: Caro, population_size: int = 10, generations: int = 50, mutation_rate: float = 0.1) -> list[int]:
         '''
             Implement a genetic algorithm to find the best move.
