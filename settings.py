@@ -53,12 +53,12 @@ class SettingsMenu:
             print(f"Error loading images: {e}")
             raise
         
-        self.ai_btn = Button(30, 220, ai_img, ai_img_gray, 0.8)
-        self.person_btn = Button(120, 220, person_img, person_img_gray, 0.8)
-        self.h_btn = Button(30, 370, h_img, h_img_gray, 0.8)
-        self.m_btn = Button(120, 370, m_img, m_img_gray, 0.8)
-        self.e_btn = Button(210, 370, e_img, e_img_gray, 0.8)
-        self.exit_btn = Button(self.width // 2 - 120, 590, exit_img, exit_img, 0.8)
+        self.ai_btn = Button(550, 220, ai_img, ai_img_gray, 0.8)
+        self.person_btn = Button(650, 220, person_img, person_img_gray, 0.8)
+        self.h_btn = Button(530, 370, h_img, h_img_gray, 0.8)
+        self.m_btn = Button(620, 370, m_img, m_img_gray, 0.8)
+        self.e_btn = Button(710, 370, e_img, e_img_gray, 0.8)
+        self.exit_btn = Button(550, 590, exit_img, exit_img, 0.8)
 
         # Khởi tạo trạng thái nút dựa trên current_settings
         if self.settings['ai_first']:
@@ -89,11 +89,11 @@ class SettingsMenu:
 
         font = pygame.font.Font('freesansbold.ttf', 20)
         player_label = font.render('Who goes first?', True, (255, 255, 255))
-        player_label_rect = player_label.get_rect(center=(100, 200))
+        player_label_rect = player_label.get_rect(center=(650, 200))
         self.screen.blit(player_label, player_label_rect)
 
         mode_label = font.render('Select mode', True, (255, 255, 255))
-        mode_label_rect = mode_label.get_rect(center=(100, 350))
+        mode_label_rect = mode_label.get_rect(center=(650, 350))
         self.screen.blit(mode_label, mode_label_rect)
 
         self.ai_btn.draw(self.screen)

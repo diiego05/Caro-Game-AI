@@ -1,0 +1,8 @@
+AI_1_Algorithm,AI_2_Algorithm,Winner
+greedy,genetic,greedy
+minimax,SA,minimax
+greedy,genetic,greedy
+greedy,Stochastic,greedy
+greedy,minimax,minimax
+greedy,genetic,greedy
+genetic,minimax,minimax

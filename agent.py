@@ -1,7 +1,7 @@
 from caro import Caro
 import copy
 import random
-
+from algorithm import Greedy, Minimax, GeneticAlgorithm,SimulatedAnnealing ,StochasticHillClimbing
 TWO = 10
 TWO_OBSTACLE = 5
 THREE = 1000
@@ -196,30 +196,33 @@ class Agent:
 
         return self.compute(game.get_all_rows()) + self.compute(game.get_all_diagonals()) + self.compute(game.get_all_colummns())
 
-    def get_move(self, game: Caro) -> list[list[int]]:
-        '''
-            Parameters
-            ----------
-
-            game: Caro object, represent current game state
-
-            Return
-            --------------
-            The best move of the current position
-        '''
+    def get_move(self, game: Caro) -> list[int]:
         if len(game.last_move) < 1:
             possible_moves = game.get_possible_moves()
-            move = random.choice(possible_moves)
-            return move
+            return random.choice(possible_moves)
         elif len(game.last_move) == 1:
             possible_moves = self.get_possible_moves_optimized(game)
-            move = random.choice(possible_moves)
-            return move
+            return random.choice(possible_moves)
 
-        best_score, best_move = self.minimax(
+        if self.algorithm == 'minimax':
+            best_score, best_move = self.minimax(
             game, self.max_depth, -INF * 10, INF * 10)
+            return best_move
 
-        return best_move
+        elif self.algorithm == 'greedy':
+            return Greedy.get_best_move(game, self.get_heuristic)
+
+        elif self.algorithm == 'genetic':
+            return GeneticAlgorithm.get_best_move(game, self.get_heuristic)
+        elif self.algorithm == 'sa':
+            return SimulatedAnnealing.get_best_move(game, self.get_heuristic)
+        elif self.algorithm == 'stochastic':
+            return StochasticHillClimbing.get_best_move(game, self.get_heuristic)
+      
+   
+        else:
+            raise ValueError(f"Unknown algorithm: {self.algorithm}")
+
         
     def minimax(self, game: Caro, depth: int, alpha: int, beta: int, maximizing_player: int = 1) -> tuple[int, list[int]]:
         '''
@@ -242,7 +245,7 @@ class Agent:
             The score of the best move and the best move coordinate.
 
         '''
-
+        
         if depth == 0 or game.get_winner() != -1:
             return self.get_heuristic(game), None
 
@@ -270,6 +273,7 @@ class Agent:
                 alpha = max(alpha, eval)
                 if beta <= alpha:
                     break
+            print("Hello:")
             return max_eval, best_move
         else:
             min_eval = INF
@@ -292,70 +296,13 @@ class Agent:
                 beta = min(beta, eval)
                 if beta <= alpha:
                     break
+
+            print("Hello:")
             return min_eval, best_move
 
    
     
-    def greedy(self, game: Caro) -> list[int]:
-        possible_moves = self.get_possible_moves_optimized(game)
-        best_move = None
-        best_score = -INF
-        
-        for move in possible_moves:
-            x, y = move
-            game.grid[x][y] = self.XO
-            score = self.get_heuristic(game)
-            game.grid[x][y] = '.'  
-            if score > best_score:
-                best_score = score
-                best_move = [x, y]
-        
-       
-        if best_move is None:
-            return [game.ROWNUM // 2, game.COLNUM // 2] 
-        return best_move
-    
-    def genetic(self, game: Caro, population_size: int = 10, generations: int = 50, mutation_rate: float = 0.1) -> list[int]:
-        '''
-            Implement a genetic algorithm to find the best move.
-            Parameters
-            -----------
-            game: The Caro object, representing the current state of the game.
-            population_size: Number of individuals in the population.
-            generations: Number of generations to evolve.
-            mutation_rate: Probability of mutation.
-            Return
-            --------
-            The best move coordinate.
-        '''
-        def initialize_population():
-            return [random.choice(self.get_possible_moves_optimized(game)) for _ in range(population_size)]
-
-        def fitness(move):
-            x, y = move
-            new_game = copy.deepcopy(game)
-            new_game.make_move(x, y)
-            return self.get_heuristic(new_game)
-
-        def crossover(parent1, parent2):
-            return random.choice([parent1, parent2])
-
-        def mutate(move):
-            if random.random() < mutation_rate:
-                return random.choice(self.get_possible_moves_optimized(game))
-            return move
-
-        population = initialize_population()
-        for _ in range(generations):
-            population = sorted(population, key=fitness, reverse=True)
-            next_generation = population[:population_size // 2]
-            while len(next_generation) < population_size:
-                parent1, parent2 = random.sample(next_generation, 2)
-                child = crossover(parent1, parent2)
-                child = mutate(child)
-                next_generation.append(child)
-            population = next_generation
-        return max(population, key=fitness)
+  
 # Testing
 
 if __name__ == '__main__':
