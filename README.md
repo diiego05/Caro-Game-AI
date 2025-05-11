@@ -61,6 +61,14 @@ caro-ai-game/
 └── menu.py            
 ```
 
+## Đội ngũ phát triển
+
+**Nhóm 14 - Trí Tuệ Nhân Tạo*
+**Thành viên*:
+  - Nguyễn Duy Cường - 23110189
+  - Nguyễn Thành Tin - 23110340
+  - Lâm Văn Dỉ - 23110191
+
 
 
 
