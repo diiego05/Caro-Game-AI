@@ -22,7 +22,10 @@ Game Caro AI là một dự án của nhóm 15 triển khai trò chơi cờ caro
     + Q-Learning
 
 - **Giao diện người dùng thân thiện**:
+  - Hình ảnh menu
 ![Hình ảnh menu](https://i.imgur.com/tlb2S7I.png)
+
+  - Hình ảnh giao diện game
   
 - **Cài đặt tùy chỉnh**:
   - Điều chỉnh độ khó AI (Dễ, Trung bình, Khó)
@@ -34,66 +37,30 @@ Game Caro AI là một dự án của nhóm 15 triển khai trò chơi cờ caro
   - Biểu đồ tròn hiển thị tỉ lệ thắng thua giữa các thuật toán AI
   - So sánh hiệu suất giữa các thuật toán
 
-## Yêu cầu hệ thống
-- Python 3.7+
-- NumPy
-- PyTorch (cho phiên bản AI sử dụng deep learning)
-- Pygame (cho giao diện đồ họa)
 
-## Cài đặt
-
-```bash
-# Chạy game
-python main.py
-```
-
-## Cách chơi
+## Hưỡng dẫn chơi
 
 1. **Khởi động trò chơi**: Chạy file `main.py`
-2. **Chọn chế độ chơi**: Người vs AI hoặc Người vs Người
-3. **Chọn cấp độ AI** (nếu chơi với máy): Dễ, Trung bình, Khó, Chuyên gia
+2. **Chọn chế độ chơi**: Người vs AI, Người vs Người hoặc AI vs AI
+3. **Chọn cấp độ AI** (chơi với máy): Dễ, Trung bình, Khó
 4. **Luật chơi**: 
    - Người chơi đánh dấu X và O luân phiên nhau
-   - Người chơi đầu tiên sử dụng X
    - Người thắng cuộc là người đầu tiên tạo được một hàng liên tiếp 5 quân (ngang, dọc hoặc chéo)
 
 ## Cấu trúc dự án
 
 ```
 caro-ai-game/
-├── main.py
-|
-├── ai.py
-│   
 ├── assets/
-│     
+├── agent.py
+├── algorithm.py  
 ├── Buttons.py
-│   
-└── agent.py
-│ 
+└── caro.py
+└── main.py
 └── settings.py
-│   
 └── menu.py            
 ```
 
-## Thuật toán AI
-
-Game Caro AI sử dụng nhiều thuật toán AI tiên tiến để cung cấp trải nghiệm chơi thách thức:
-
-### Thuật toán Minimax với cắt tỉa Alpha-Beta
-- Tìm kiếm nước đi tối ưu bằng cách đánh giá các trạng thái tương lai
-- Cắt tỉa Alpha-Beta giúp tăng tốc độ tìm kiếm
-- Độ sâu tìm kiếm thay đổi theo cấp độ khó
-
-### Monte Carlo Tree Search (MCTS)
-- Mô phỏng hàng nghìn ván đấu để đánh giá chất lượng nước đi
-- Cân bằng giữa khám phá và khai thác
-- Hiệu quả với không gian trạng thái lớn
-
-### Đánh giá bàn cờ
-- Phân tích mẫu (patterns) trên bàn cờ
-- Đánh giá vị trí chiến lược và tiềm năng tấn công/phòng thủ
-- Học từ dữ liệu ván đấu trước đó
 
 
 
