@@ -7,10 +7,13 @@ import os
 from agent import Agent
 from menu import GameMenu
 from settings import SettingsMenu
-import csv  # Add this import for CSV handling
-import pandas as pd  # Add this import for Pandas
-import matplotlib.pyplot as plt  # Add this import for plotting
-
+import csv 
+import pandas as pd  
+import matplotlib.pyplot as plt  
+import tkinter as tk
+from algorithm import QLearning
+import copy
+from tkinter import ttk
 # -------------------------Setup----------------------------
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -30,8 +33,6 @@ is_developer_mode = False
 dev_mode_setup = {
     'ai_1': 'X',
     'ai_2': 'O',
-    'ai_1_depth': 1,
-    'ai_2_depth': 3,
     'start': False,
 }
 
@@ -45,6 +46,7 @@ def main():
     pygame.init()
     Window_size = [1280, 720]
     
+
     while True:
         menu = GameMenu(Window_size[0], Window_size[1])
         menu_result = menu.run()
@@ -75,7 +77,7 @@ def main():
                 # Cập nhật cài đặt và chạy game
                 game_settings.update(new_settings)
                 my_game.use_ai(True)
-                my_game.change_hard_ai(game_settings['difficulty'])
+                my_game.change_hard_ai(game_settings['difficulty'])  
                 my_game.set_ai_turn(1 if game_settings['ai_first'] else 2)
                 run_main_game(my_game)
 
@@ -92,80 +94,52 @@ def log_ai_vs_ai_results(ai_1_algorithm, ai_2_algorithm, winner):
             writer.writerow(["AI_1_Algorithm", "AI_2_Algorithm", "Winner"])  # Write header
         writer.writerow([ai_1_algorithm, ai_2_algorithm, winner])
 
+import tkinter as tk
+from tkinter import ttk
+import pandas as pd
+import os
+import matplotlib.pyplot as plt
+
+import tkinter as tk
+from tkinter import ttk
+import pandas as pd
+import os
+import matplotlib.pyplot as plt
+
 def show_win_rate_graph():
     csv_file = os.path.join(os.getcwd(), "ai_vs_ai_results.csv")
     if not os.path.isfile(csv_file):
         print("No data available to display.")
         return
 
-    # Pause Pygame display updates
-    pygame.display.iconify()
-
-    # Load data from CSV
     data = pd.read_csv(csv_file)
-
-    # Define the algorithms
-    algorithms = ["greedy", "genetic", "minimax", "Stochastic", "SA"]
-
-    # Create subplots for all algorithms
-    fig, axes = plt.subplots(1, 5, figsize=(10, 2.5))  # Reduced figure size
-    fig.suptitle("Win Rate for Each Algorithm", fontsize=16)
-
-    for i, algorithm in enumerate(algorithms):
-        total_games = len(data[(data['AI_1_Algorithm'] == algorithm) | (data['AI_2_Algorithm'] == algorithm)])
-        wins = len(data[data['Winner'] == algorithm])
-
-        if total_games > 0:
-            win_percentage = (wins / total_games) * 100
-            lose_percentage = 100 - win_percentage
-
-            # Data for the pie chart
-            labels = ['Wins', 'Losses']
-            sizes = [win_percentage, lose_percentage]
-            colors = ['#4CAF50', '#FF5722']  # Green for wins, red for losses
-            explode = (0.1, 0)  # Slightly explode the 'Wins' slice
-
-            # Plot the pie chart
-            axes[i].pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
-            axes[i].set_title(algorithm.capitalize(), fontsize=14)
-            axes[i].axis('equal')  # Equal aspect ratio ensures the pie chart is circular
-        else:
-            axes[i].text(0.5, 0.5, "No Data", horizontalalignment='center', verticalalignment='center', fontsize=12)
-            axes[i].axis('off')
-
-    plt.tight_layout(rect=[0, 0, 1, 0.95])  # Adjust layout to fit the title
-    plt.show()
-
-    # Add combo boxes for selecting algorithms
-    import tkinter as tk
-    from tkinter import ttk
+    algorithms = ["greedy", "genetic", "Stochastic", "SA", "UCS", "qlearning", "backtracking", "andor"]
 
     root = tk.Tk()
     root.title("Select Algorithms for Comparison")
+    root.geometry("400x250")
+    root.eval('tk::PlaceWindow . center')
 
-    # Define algorithms
-    algorithms = ["greedy", "genetic", "minimax", "Stochastic", "SA"]
+    center_frame = tk.Frame(root)
+    center_frame.pack(expand=True)
 
-    # Create labels and combo boxes
-    tk.Label(root, text="Select AI 1 Algorithm:", font=("Arial", 12)).grid(row=0, column=0, padx=10, pady=5)
-    ai1_combo = ttk.Combobox(root, values=algorithms, state="readonly", font=("Arial", 10))
+    tk.Label(center_frame, text="Select AI 1 Algorithm:", font=("Arial", 12)).pack(pady=5)
+    ai1_combo = ttk.Combobox(center_frame, values=algorithms, state="readonly", font=("Arial", 10), width=20)
     ai1_combo.set("greedy")
-    ai1_combo.grid(row=0, column=1, padx=10, pady=5)
+    ai1_combo.pack(pady=5)
 
-    tk.Label(root, text="Select AI 2 Algorithm:", font=("Arial", 12)).grid(row=1, column=0, padx=10, pady=5)
-    ai2_combo = ttk.Combobox(root, values=algorithms, state="readonly", font=("Arial", 10))
+    tk.Label(center_frame, text="Select AI 2 Algorithm:", font=("Arial", 12)).pack(pady=5)
+    ai2_combo = ttk.Combobox(center_frame, values=algorithms, state="readonly", font=("Arial", 10), width=20)
     ai2_combo.set("genetic")
-    ai2_combo.grid(row=1, column=1, padx=10, pady=5)
+    ai2_combo.pack(pady=5)
 
     def plot_comparison():
         ai1_algorithm = ai1_combo.get()
         ai2_algorithm = ai2_combo.get()
 
-        # Filter data for the selected algorithms
         ai1_first = data[(data['AI_1_Algorithm'] == ai1_algorithm) & (data['AI_2_Algorithm'] == ai2_algorithm)]
         ai2_first = data[(data['AI_1_Algorithm'] == ai2_algorithm) & (data['AI_2_Algorithm'] == ai1_algorithm)]
 
-        # Calculate win rates
         ai1_first_wins = len(ai1_first[ai1_first['Winner'] == ai1_algorithm])
         ai1_first_total = len(ai1_first)
         ai1_first_win_rate = (ai1_first_wins / ai1_first_total) * 100 if ai1_first_total > 0 else 0
@@ -174,12 +148,12 @@ def show_win_rate_graph():
         ai2_first_total = len(ai2_first)
         ai2_first_win_rate = (ai2_first_wins / ai2_first_total) * 100 if ai2_first_total > 0 else 0
 
-        # Plot pie charts
-        fig, axes = plt.subplots(2, 5, figsize=(15, 8))  # Adjusted layout for combined charts
-        fig.suptitle(f"Win Rates for Each Algorithm and Comparison", fontsize=16)
+        fig, axes = plt.subplots(3, 4, figsize=(16, 10))
+        fig.suptitle("Win Rate and Comparison Between Selected Algorithms", fontsize=16)
 
-        # Individual algorithm win rates
-        for i, algorithm in enumerate(algorithms):
+        for idx, algorithm in enumerate(algorithms):
+            row = idx // 4
+            col = idx % 4
             total_games = len(data[(data['AI_1_Algorithm'] == algorithm) | (data['AI_2_Algorithm'] == algorithm)])
             wins = len(data[data['Winner'] == algorithm])
 
@@ -187,54 +161,60 @@ def show_win_rate_graph():
                 win_percentage = (wins / total_games) * 100
                 lose_percentage = 100 - win_percentage
 
-                axes[0, i].pie(
+                wedges, texts, autotexts = axes[row, col].pie(
                     [win_percentage, lose_percentage],
-                    labels=["Wins", "Losses"],
-                    colors=["#4CAF50", "#FF5722"],
+                    colors=["#2196F3", "#F44336"],
                     autopct='%1.1f%%',
-                    startangle=140
+                    startangle=140,
+                    textprops={'fontsize': 10, 'color': 'white'},
+                    explode=(0.1, 0)  # Tạo hiệu ứng cho phần thắng (nổi lên)
                 )
-                axes[0, i].set_title(algorithm.capitalize())
+                axes[row, col].set_title(f"{algorithm.capitalize()} ({total_games} games)")
+                axes[row, col].legend(wedges, ["Win", "Loss"], loc="lower right", fontsize=8, frameon=False,  bbox_to_anchor=(1.2, 0.1))
             else:
-                axes[0, i].text(0.5, 0.5, "No Data", horizontalalignment='center', verticalalignment='center', fontsize=12)
-                axes[0, i].axis('off')
+                axes[row, col].text(0.5, 0.5, "No Data", ha='center', va='center', fontsize=12)
+                axes[row, col].axis('off')
 
-        # AI1 goes first
-        axes[1, 0].pie(
+        # Biểu đồ win-rate của AI 1 và AI 2 khi đứng đầu
+        wedges1, _, _ = axes[2, 1].pie(
             [ai1_first_win_rate, 100 - ai1_first_win_rate],
             labels=["Wins", "Losses"],
-            colors=["#4CAF50", "#FF5722"],
+            colors=["#2196F3", "#F44336"],
             autopct='%1.1f%%',
-            startangle=140
+            startangle=140,
+            textprops={'fontsize': 10, 'color': 'white'},
+            explode=(0.1, 0)  # Tạo hiệu ứng cho phần thắng (nổi lên)
         )
-        axes[1, 0].set_title(f"{ai1_algorithm} First")
+        axes[2, 1].set_title(f"{ai1_algorithm} First ({ai1_first_total} games)")
+        axes[2, 1].legend(wedges1, ["Wins", "Losses"], loc="lower right", fontsize=8, frameon=False,  bbox_to_anchor=(1.3, 0.1))
 
-        # AI2 goes first
-        axes[1, 1].pie(
+        wedges2, _, _ = axes[2, 2].pie(
             [ai2_first_win_rate, 100 - ai2_first_win_rate],
             labels=["Wins", "Losses"],
-            colors=["#4CAF50", "#FF5722"],
+            colors=["#2196F3", "#F44336"],
             autopct='%1.1f%%',
-            startangle=140
+            startangle=140,
+            textprops={'fontsize': 10, 'color': 'white'},
+            explode=(0.1, 0)  # Tạo hiệu ứng cho phần thắng (nổi lên)
         )
-        axes[1, 1].set_title(f"{ai2_algorithm} First")
+        axes[2, 2].set_title(f"{ai2_algorithm} First ({ai2_first_total} games)")
+        axes[2, 2].legend(wedges2, ["Wins", "Losses"], loc="lower right", fontsize=8, frameon=False,  bbox_to_anchor=(1.3, 0.1))
 
-        # Hide unused subplots in the second row
-        for i in range(2, 5):
-            axes[1, i].axis('off')
-
+        
+        axes[2, 0].axis('off')
+        axes[2, 3].axis('off')
         plt.tight_layout(rect=[0, 0, 1, 0.95])
         plt.show()
 
-    # Add a button to plot the comparison
-    tk.Button(root, text="Compare", command=plot_comparison, font=("Arial", 12)).grid(row=2, column=0, columnspan=2, pady=10)
-
+    tk.Button(center_frame, text="Compare", command=plot_comparison, font=("Arial", 12)).pack(pady=10)
     root.mainloop()
 
-    # Restore Pygame display updates
-    if not pygame.get_init():
-        pygame.display.init()
-    pygame.display.set_mode((1280, 720))
+
+
+    
+
+
+
 
 def draw_rounded_rect(surface, color, rect, corner_radius):
     """
@@ -261,15 +241,17 @@ def draw_win_rate_button(screen, x, y, width, height):
 
 def run_main_game(my_game):
     difficulty = my_game.hard_ai
+  
     if difficulty == 1:
         algorithm = "greedy"
     elif difficulty == 2:
-        algorithm = "genetic"
+        algorithm = "SA"
     elif difficulty == 3:
-        algorithm = "minimax"
-    agent = Agent(max_depth=my_game.hard_ai, XO=my_game.get_current_XO_for_AI(),algorithm=algorithm)
-    agent1 = Agent(max_depth=dev_mode_setup['ai_1_depth'], XO=dev_mode_setup['ai_1'],algorithm=algorithm)  
-    agent2 = Agent(max_depth=dev_mode_setup['ai_2_depth'], XO=dev_mode_setup['ai_2'],algorithm= algorithm)
+        algorithm = "genetic"
+
+    agent = Agent(XO=my_game.get_current_XO_for_AI(), algorithm=algorithm)  # Removed max_depth
+    agent1 = Agent(XO=dev_mode_setup['ai_1'], algorithm=algorithm)  # Removed max_depth
+    agent2 = Agent(XO=dev_mode_setup['ai_2'], algorithm=algorithm)  # Removed max_depth
 
     Window_size = [1280, 720]
     my_len_min = min(900/COLNUM, (720) / ROWNUM)
@@ -521,12 +503,12 @@ def run_main_game(my_game):
                 ai_thinking_btn = button.Button(1020, 30, ai_thinking_img, ai_thinking_img_gray, 0.8)
                 pvp_btn = button.Button(1075, 145, pvp_img, pvp_img_gray, 0.8)
                 aivp_btn = button.Button(970, 145, aivp_img, aivp_img_gray, 0.8)
-                aivai_btn = button.Button(1020, 250, aivai_img, aivp_img_gray, 0.8)
+                aivai_btn = button.Button(1020, 250, aivai_img, aivai_img_gray, 0.8)
 
                 # Reinitialize agents for AI vs AI mode
                 if aivai_btn.is_disable:
-                    agent1 = Agent(max_depth=dev_mode_setup['ai_1_depth'], XO=dev_mode_setup['ai_1'], algorithm=ai_1_algorithm)
-                    agent2 = Agent(max_depth=dev_mode_setup['ai_2_depth'], XO=dev_mode_setup['ai_2'], algorithm=ai_2_algorithm)
+                    agent1 = Agent(XO=dev_mode_setup['ai_1'], algorithm=ai_1_algorithm)  # Removed max_depth
+                    agent2 = Agent(XO=dev_mode_setup['ai_2'], algorithm=ai_2_algorithm)  # Removed max_depth
                     # Automatically let AI play against each other
                     while my_game.get_winner() == -1:
                         if my_game.turn == 1:
@@ -560,12 +542,12 @@ def run_main_game(my_game):
                     my_game.use_ai(True)
                     aivp_btn.disable_button()
                     pvp_btn.enable_button()
-                    agent = Agent(max_depth=my_game.hard_ai, XO=my_game.get_current_XO_for_AI(),algorithm = algorithm)
+                    agent = Agent(XO=my_game.get_current_XO_for_AI(),algorithm = algorithm)
                     
                 if aivai_btn.draw(Screen):
                     # Display combo boxes to select algorithms for AI 1 and AI 2
-                    import tkinter as tk
-                    from tkinter import ttk
+                    
+
                     from PIL import Image, ImageTk
 
                     root = tk.Tk()
@@ -581,10 +563,7 @@ def run_main_game(my_game):
                     bg_label.place(x=0, y=0, relwidth=1, relheight=1)
                     background_label = tk.Label(combo_window, image=bg_photo)
                     background_label.place(x=0, y=0, relwidth=1, relheight=1)
-                    pixel_font = ("Courier New", 12, "bold")
-                    label_fg = "#00FFFF"
 
-                    window_bg = "#000000"  # Replace with a valid color code (e.g., black)
                     # Center the window on the screen
                     window_width, window_height = 300, 300
                     screen_width = combo_window.winfo_screenwidth()
@@ -594,7 +573,7 @@ def run_main_game(my_game):
                     combo_window.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
 
                     # Options for algorithms
-                    algorithms = ["greedy", "genetic", "minimax","Stochastic","SA"]
+                    algorithms = ["greedy", "genetic", "Stochastic", "SA", "UCS", "qlearning", "backtracking", "andor"]  # Add And-Or
 
                     # Create a frame for better organization
                     frame = tk.Frame(combo_window, bg="#1E1E1E")  # Nền tối giống menu chính
@@ -606,13 +585,13 @@ def run_main_game(my_game):
                     # AI 1 Algorithm
                     tk.Label(frame, text="AI 1 Algorithm (X):", font=("Courier New", 12, "bold"), fg="#00FF00", bg="#1E1E1E").pack(anchor="w", padx=20, pady=5)
                     ai_1_combo = ttk.Combobox(frame, values=algorithms, state="readonly", font=("Courier New", 12))
-                    ai_1_combo.set("minimax")
+                    ai_1_combo.set("greedy")
                     ai_1_combo.pack(fill="x", padx=20, pady=5)
 
                     # AI 2 Algorithm
                     tk.Label(frame, text="AI 2 Algorithm (O):", font=("Courier New", 12, "bold"), fg="#FF4500", bg="#1E1E1E").pack(anchor="w", padx=20, pady=5)
                     ai_2_combo = ttk.Combobox(frame, values=algorithms, state="readonly", font=("Courier New", 12))
-                    ai_2_combo.set("minimax")
+                    ai_2_combo.set("greedy")
                     ai_2_combo.pack(fill="x", padx=20, pady=5)
 
                     def on_submit():
@@ -630,11 +609,11 @@ def run_main_game(my_game):
                     root.wait_window(combo_window)
 
                     # Validate input and set default values if invalid
-                    valid_algorithms = {"greedy", "genetic", "minimax","Stochastic", "SA"}
+                    valid_algorithms = {"greedy", "genetic", "Stochastic", "SA", "UCS", "qlearning", "backtracking", "andor"}  # Add And-Or
                     if ai_1_algorithm not in valid_algorithms:
-                        ai_1_algorithm = "minimax"
+                        ai_1_algorithm = "greedy"
                     if ai_2_algorithm not in valid_algorithms:
-                        ai_2_algorithm = "minimax"
+                        ai_2_algorithm = "greedy"
 
                     my_game.use_ai(True)
                     aivai_btn.disable_button()
@@ -643,12 +622,10 @@ def run_main_game(my_game):
                     dev_mode_setup['start'] = True
                     ai_thinking_btn.enable_button()
                     agent1 = Agent(
-                        max_depth=3 if ai_1_algorithm == "minimax" else dev_mode_setup['ai_1_depth'],
                         XO=dev_mode_setup['ai_1'],
                         algorithm=ai_1_algorithm
                     )
                     agent2 = Agent(
-                        max_depth=3 if ai_2_algorithm == "minimax" else dev_mode_setup['ai_2_depth'],
                         XO=dev_mode_setup['ai_2'],
                         algorithm=ai_2_algorithm
                     )
@@ -665,6 +642,12 @@ def run_main_game(my_game):
                         my_game.make_move(best_move[0], best_move[1])
                         draw(my_game, Screen)
                         pygame.display.update()
+                    
+                    # Save Q-tables after the game ends
+                    if agent1.algorithm == 'qlearning':
+                        agent1.q_learning_agent.save_q_table()
+                    if agent2.algorithm == 'qlearning':
+                        agent2.q_learning_agent.save_q_table()
                     
                     # Log the result after the game ends
                     winner = my_game.get_winner()
@@ -701,7 +684,7 @@ def run_main_game(my_game):
                         dev_mode_setup['start'] = True
                         ai_thinking_btn.enable_button()
                     else:
-                        dev_mode_setup['start'] = False
+                        dev_mode_setup['start'] == False
                         ai_thinking_btn.disable_button()
                 ai_thinking_btn.re_draw(Screen)
                 if my_game.get_winner() == -1 and dev_mode_setup['start']:

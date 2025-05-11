@@ -3,7 +3,56 @@ from caro import Caro
 import random
 import math
 import time
+import heapq
+import pickle  # Add for saving/loading Q-table
 INF = 999999999999
+
+dx = [1, 1, 1, -1, -1, -1, 0, 0]
+dy = [1, -1, 0, 1, -1, 0, 1, -1]
+
+def g(game: Caro, x: int, y: int) -> float:
+    """
+    Hàm tính chi phí thực tế g(x) cho bước đi (x, y) trong trò chơi Caro.
+    Chi phí được tính dựa trên các yếu tố: độ sâu của trạng thái, nguy hiểm từ đối thủ, cơ hội chiến thắng của người chơi.
+    """
+    # Chi phí cơ bản cho mỗi bước đi
+    base_cost = 1  
+    
+    # Chi phí độ sâu (số bước di chuyển đã thực hiện)
+    depth_cost = game.current_turn  # Số bước đi đã thực hiện
+    
+    # Lấy đối thủ và người chơi hiện tại
+    opponent = 'O' if game.XO == 'X' else 'X'  # Đối thủ là người chơi đối lập
+    player = game.XO  # Người chơi hiện tại
+
+    # Tính chi phí nguy hiểm từ đối thủ
+    opponent_danger = 0
+    for direction in range(8):
+        nx, ny = x + dx[direction], y + dy[direction]
+        if 0 <= nx < game.rows and 0 <= ny < game.cols:
+            if game.grid[nx][ny] == opponent:
+                opponent_danger += 1  # Đối thủ có thể tạo chuỗi có thể thắng
+
+    # Tính chi phí đối thủ (chi phí tăng khi đối thủ có thể chiến thắng)
+    opponent_cost = opponent_danger * 2  # Chi phí cao hơn khi đối thủ có thể thắng
+
+    # Tính chi phí cơ hội cho người chơi
+    player_opportunity = 0
+    for direction in range(8):
+        nx, ny = x + dx[direction], y + dy[direction]
+        if 0 <= nx < game.rows and 0 <= ny < game.cols:
+            if game.grid[nx][ny] == player:
+                player_opportunity += 1  # Người chơi có thể tạo chuỗi chiến thắng
+
+    # Tính chi phí người chơi (giảm chi phí khi người chơi có cơ hội chiến thắng)
+    player_cost = -player_opportunity * 1.5  # Thưởng khi người chơi có cơ hội chiến thắng
+
+    # Tổng chi phí thực tế
+    total_cost = base_cost + depth_cost + opponent_cost + player_cost
+    return total_cost
+
+
+
 
 def get_possible_moves_optimized(game: Caro) -> list[list[int]]:
     dx = [1, 1, 1, -1, -1, -1, 0, 0]
@@ -22,52 +71,6 @@ def get_possible_moves_optimized(game: Caro) -> list[list[int]]:
                     result.append([nx, ny])
 
     return result
-
-class Minimax:
-    @staticmethod
-    def minimax(game: Caro, depth: int, alpha: int, beta: int, maximizing_player: int, heuristic_func) -> tuple[int, list[int]]:
-        print("Hello:ok")
-        if depth == 0 or game.get_winner() != -1:
-            return heuristic_func(game), None
-
-        possible_moves = get_possible_moves_optimized(game)
-
-        if maximizing_player:
-            max_eval = -INF
-            best_move = possible_moves[0]
-
-            for move in possible_moves:
-                x, y = move
-                new_game = copy.deepcopy(game)
-                new_game.make_move(x, y)
-                eval, _ = Minimax.minimax(new_game, depth - 1, alpha, beta, 0, heuristic_func)
-
-                if eval > max_eval:
-                    max_eval = eval
-                    best_move = [x, y]
-
-                alpha = max(alpha, eval)
-                if beta <= alpha:
-                    break
-            return max_eval, best_move
-        else:
-            min_eval = INF
-            best_move = possible_moves[0]
-
-            for move in possible_moves:
-                x, y = move
-                new_game = copy.deepcopy(game)
-                new_game.make_move(x, y)
-                eval, _ = Minimax.minimax(new_game, depth - 1, alpha, beta, 1, heuristic_func)
-
-                if eval < min_eval:
-                    min_eval = eval
-                    best_move = [x, y]
-
-                beta = min(beta, eval)
-                if beta <= alpha:
-                    break
-            return min_eval, best_move
 
 class Greedy:
     @staticmethod
@@ -213,7 +216,6 @@ class StochasticHillClimbing:
             if next_score > current_score:
                 current_move = next_move
                 current_score = next_score
-
                 if current_score > best_score:
                     best_score = current_score
                     best_move = current_move
@@ -221,4 +223,153 @@ class StochasticHillClimbing:
                 break  # Dừng lại nếu không có bước đi nào cải thiện
 
         return best_move
+class UCS:
+    @staticmethod
+    def get_best_move(game: Caro, heuristic_func=None) -> list[int]:
+        print("Hello UCS:")
+
+        possible_moves = get_possible_moves_optimized(game)
+        if not possible_moves:
+            return None
+
+        pq = []  # priority queue: (total_cost, move)
+        for move in possible_moves:
+            x, y = move
+            cost = g(game, x, y)
+            heapq.heappush(pq, (cost, move))
+
+        best_move = None
+        min_cost = INF
+
+        while pq:
+            cost, move = heapq.heappop(pq)
+            if cost < min_cost:
+                min_cost = cost
+                best_move = move
+
+        return best_move
+
+from collections import defaultdict
+
+class QLearning:
+    def __init__(self, alpha=0.1, gamma=0.9, epsilon=0.2, q_table_file="q_table.pkl"):
+        self.alpha = alpha
+        self.gamma = gamma
+        self.epsilon = epsilon
+        self.q_table_file = q_table_file
+        self.q_table = defaultdict(lambda: defaultdict(float))
+        self.load_q_table()
+
+    def load_q_table(self):
+        try:
+            with open(self.q_table_file, "rb") as file:
+                raw_q_table = pickle.load(file)
+                self.q_table = defaultdict(lambda: defaultdict(float),
+                                           {k: defaultdict(float, v) for k, v in raw_q_table.items()})
+        except FileNotFoundError:
+            self.q_table = defaultdict(lambda: defaultdict(float))
+
+    def save_q_table(self):
+        with open(self.q_table_file, "wb") as file:
+            q_table_dict = {k: dict(v) for k, v in self.q_table.items()}
+            pickle.dump(q_table_dict, file)
+
+    def get_state_key(self, game: 'Caro'):
+        return str(game.grid)
+
+    def get_best_action(self, game: 'Caro'):
+        state_key = self.get_state_key(game)
+        possible_moves = get_possible_moves_optimized(game)
+        if not possible_moves:
+            return None
+        if random.random() < self.epsilon or state_key not in self.q_table:
+            return random.choice(possible_moves)
+        return max(self.q_table[state_key], key=self.q_table[state_key].get)
+
+    def update_q_value(self, game: 'Caro', move, reward, next_game: 'Caro'):
+        state_key = self.get_state_key(game)
+        next_state_key = self.get_state_key(next_game)
+        move = tuple(move)
+
+        max_next_q = max(self.q_table[next_state_key].values(), default=0.0)
+        td_target = reward + self.gamma * max_next_q
+        td_error = td_target - self.q_table[state_key][move]
+        self.q_table[state_key][move] += self.alpha * td_error
+
+    @staticmethod
+    def get_best_move(game: 'Caro', q_learning_agent):
+        return q_learning_agent.get_best_action(game)
     
+class Backtracking:
+    @staticmethod
+    def get_best_move(game: Caro, heuristic_func, max_depth=3) -> list[int]:
+        print("Hello Backtracking:")
+
+        def backtrack(current_game: Caro, depth: int, is_ai_turn: bool):
+            # Replace is_game_over with get_winner
+            if depth == 0 or current_game.get_winner() != -1:  # Check if the game has ended
+                return heuristic_func(current_game), None
+
+            possible_moves = get_possible_moves_optimized(current_game)
+            if not possible_moves:
+                return heuristic_func(current_game), None
+
+            best_score = -INF if is_ai_turn else INF
+            best_move = None
+
+            for move in possible_moves:
+                x, y = move
+                new_game = copy.deepcopy(current_game)
+                new_game.make_move(x, y)
+
+                score, _ = backtrack(new_game, depth - 1, not is_ai_turn)
+
+                if is_ai_turn:
+                    if score > best_score:
+                        best_score = score
+                        best_move = move
+                else:
+                    if score < best_score:
+                        best_score = score
+                        best_move = move
+
+            return best_score, best_move
+
+        _, move = backtrack(game, max_depth, True)
+        return move
+class AndOr:
+    @staticmethod
+    def get_best_move(game: Caro, heuristic_func, max_depth=3) -> list[int]:
+        def and_or_search(game: Caro, depth: int, is_ai_turn: bool):
+            if depth == 0 or game.get_winner() != -1:
+                return heuristic_func(game), None
+
+            possible_moves = get_possible_moves_optimized(game)
+            if not possible_moves:
+                return heuristic_func(game), None
+
+            if is_ai_turn:
+                # OR node: chọn 1 nước đi tốt nhất
+                best_score = -float('inf')
+                best_move = None
+                for move in possible_moves:
+                    new_game = copy.deepcopy(game)
+                    new_game.make_move(*move)
+                    score, _ = and_or_search(new_game, depth - 1, False)  # Đến lượt đối thủ
+                    if score > best_score:
+                        best_score = score
+                        best_move = move
+                return best_score, best_move
+            else:
+                # AND node: đối thủ có thể đi bất kỳ đâu → AI phải chuẩn bị cho mọi trường hợp
+                worst_score = float('inf')
+                for move in possible_moves:
+                    new_game = copy.deepcopy(game)
+                    new_game.make_move(*move)
+                    score, _ = and_or_search(new_game, depth - 1, True)  # Đến lượt AI lại
+                    if score < worst_score:
+                        worst_score = score
+                return worst_score, None  # Không cần move vì AI không đi trong lượt này
+
+        _, move = and_or_search(game, max_depth, True)
+        return move

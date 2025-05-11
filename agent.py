@@ -1,7 +1,7 @@
 from caro import Caro
 import copy
 import random
-from algorithm import Greedy, Minimax, GeneticAlgorithm,SimulatedAnnealing ,StochasticHillClimbing
+from algorithm import Greedy, GeneticAlgorithm, SimulatedAnnealing, StochasticHillClimbing, UCS, QLearning, Backtracking, AndOr
 TWO = 10
 TWO_OBSTACLE = 5
 THREE = 1000
@@ -26,19 +26,22 @@ dy = [1, -1, 0, 1, -1, 0, 1, -1]
 
 class Agent:
 
-    def __init__(self, max_depth: int, XO: str, algorithm: str = 'minimax') -> None:
+    def __init__(self, XO: str, algorithm: str = 'greedy') -> None:
         '''
         Parameters
             ----------------
-            max_depth: Maximum depth for the Minimax tree
             XO: 'X' or 'O', depend on the agent's turn
-            algorithm: The algorithm to use ('minimax', 'greedy', 'ucs', 'genetic')
+            algorithm: The algorithm to use ('greedy', 'genetic', 'sa', 'stochastic', 'bfs')
         '''
-        self.max_depth = max_depth
         self.XO = XO
         self.algorithm = algorithm.lower()
 
-        print(f"max_depth: {max_depth}; XO: {XO}; algorithm: {algorithm}")
+        print(f"XO: {XO}; algorithm: {algorithm}")
+
+        if self.algorithm == 'qlearning':
+            self.q_learning_agent = QLearning()  # Initialize QLearning agent
+        else:
+            self.q_learning_agent = None
 
     def get_possible_moves_optimized(self, game: Caro) -> list[list[int]]:
         visited = [[0 for _ in range(game.cols)] for _ in range(game.rows)]
@@ -204,12 +207,7 @@ class Agent:
             possible_moves = self.get_possible_moves_optimized(game)
             return random.choice(possible_moves)
 
-        if self.algorithm == 'minimax':
-            best_score, best_move = self.minimax(
-            game, self.max_depth, -INF * 10, INF * 10)
-            return best_move
-
-        elif self.algorithm == 'greedy':
+        if self.algorithm == 'greedy':
             return Greedy.get_best_move(game, self.get_heuristic)
 
         elif self.algorithm == 'genetic':
@@ -218,89 +216,19 @@ class Agent:
             return SimulatedAnnealing.get_best_move(game, self.get_heuristic)
         elif self.algorithm == 'stochastic':
             return StochasticHillClimbing.get_best_move(game, self.get_heuristic)
-      
-   
+        elif self.algorithm == 'ucs':
+            return UCS.get_best_move(game, self.get_heuristic)
+        elif self.algorithm == 'qlearning':
+            return QLearning.get_best_move(game, self.q_learning_agent)
+        elif self.algorithm == 'backtracking':
+            return Backtracking.get_best_move(game, self.get_heuristic)
+        elif self.algorithm == 'andor':
+                 return AndOr.get_best_move(game, self.get_heuristic)
         else:
             raise ValueError(f"Unknown algorithm: {self.algorithm}")
 
-        
-    def minimax(self, game: Caro, depth: int, alpha: int, beta: int, maximizing_player: int = 1) -> tuple[int, list[int]]:
-        '''
-            Implement the Minimax algorithm.
-
-            Parameters
-            ------------
-            game: The Caro object, represent the current state of the game.
-
-            depth: The current depth in minimax tree.
-
-            alpha: maximum heuristic for alpha-beta pruning optimization.
-
-            beta: minimum heuristic for alpha-beta pruning optimization.
-
-            maximizing_player: 1 if we need to maximize heuristic, 0 otherwise.
-
-            Return
-            ------------
-            The score of the best move and the best move coordinate.
-
-        '''
-        
-        if depth == 0 or game.get_winner() != -1:
-            return self.get_heuristic(game), None
-
-        possible_moves = self.get_possible_moves_optimized(game)
-        # possible_moves = game.get_possible_moves()
-
-        if maximizing_player:
-            max_eval = -INF
-            best_move = possible_moves[0]
-
-            for possible_move in possible_moves:
-                x = possible_move[0]
-                y = possible_move[1]
-
-                new_game = copy.deepcopy(game)
-                new_game.make_move(x, y)
-
-                eval, move = self.minimax(new_game, depth - 1,
-                                          alpha, beta, maximizing_player ^ 1)
-
-                if eval > max_eval:
-                    max_eval = eval
-                    best_move = [x, y]
-
-                alpha = max(alpha, eval)
-                if beta <= alpha:
-                    break
-            print("Hello:")
-            return max_eval, best_move
-        else:
-            min_eval = INF
-            best_move = possible_moves[0]
-
-            for possible_move in possible_moves:
-                x = possible_move[0]
-                y = possible_move[1]
-
-                new_game = copy.deepcopy(game)
-                new_game.make_move(x, y)
-
-                eval, move = self.minimax(new_game, depth - 1,
-                                          alpha, beta, maximizing_player ^ 1)
-
-                if eval < min_eval:
-                    min_eval = eval
-                    best_move = [x, y]
-
-                beta = min(beta, eval)
-                if beta <= alpha:
-                    break
-
-            print("Hello:")
-            return min_eval, best_move
-
    
+  
     
   
 # Testing
@@ -315,7 +243,7 @@ if __name__ == '__main__':
         ['.', '.', '.', '.', '.'],
     ]
 
-    agent = Agent(max_depth=2, XO='X')
+    agent = Agent(XO='X')
     possible_moves = agent.get_possible_moves_optimized(game)
     print(f'possible_moves: {possible_moves}')
     best_move = agent.get_move(game)

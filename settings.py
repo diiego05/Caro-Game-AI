@@ -68,7 +68,7 @@ class SettingsMenu:
             self.person_btn.disable_button()
             self.ai_btn.enable_button()
         
-        if self.settings['difficulty'] == 'hard':
+        if self.settings['difficulty'] == 'hard':  # Replace "hard" with "SA"
             self.h_btn.disable_button()
             self.m_btn.enable_button()
             self.e_btn.enable_button()
@@ -76,6 +76,7 @@ class SettingsMenu:
             self.m_btn.disable_button()
             self.h_btn.enable_button()
             self.e_btn.enable_button()
+     
         else:  # easy
             self.e_btn.disable_button()
             self.h_btn.enable_button()
@@ -124,11 +125,11 @@ class SettingsMenu:
                     self.settings['ai_first'] = False
                     self.game.set_ai_turn(2)
                 
-                if self.h_btn.draw(self.screen):
+                if self.h_btn.draw(self.screen):  # Update button logic
                     self.h_btn.disable_button()
                     self.m_btn.enable_button()
                     self.e_btn.enable_button()
-                    self.settings['difficulty'] = 'hard'
+                    self.settings['difficulty'] = 'hard'  # Add Backtracking
                     self.game.change_hard_ai("hard")
                 
                 if self.m_btn.draw(self.screen):

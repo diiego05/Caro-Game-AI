@@ -25,6 +25,7 @@ class Caro:
         self.turn = 1
         self.ai_turn = 2
         self.is_use_ai = False
+        self.current_turn = 0  # Add this attribute to track the number of moves made
 
     def reset(self):
         '''
@@ -34,6 +35,7 @@ class Caro:
         self.last_move = []
         self.turn = 1
         self.XO = self.originXO
+        self.current_turn = 0  # Reset the turn count when the game is reset
 
     def get_possible_moves(self) -> list[list[int]]:
         '''
@@ -211,14 +213,14 @@ class Caro:
         else:
             self.turn = 1
 
+        self.current_turn += 1  # Increment the turn count after each move
+
     def change_hard_ai(self, hard: str):
         if hard == 'easy':
             self.hard_ai = 1
-        elif hard == 'hard':
+        elif hard == 'hard': 
             self.hard_ai = 3
         elif hard == 'medium':
-            self.hard_ai = 2
-        else:
             self.hard_ai = 2
     
     def use_ai(self, is_true: bool):
@@ -256,7 +258,5 @@ class Caro:
 
 
 
-# Test
-if __name__ == '__main__':
-    game = Caro()
+
 
