@@ -4,7 +4,7 @@
 
 Game Caro AI là một dự án của nhóm 15 triển khai trò chơi cờ caro kết hợp với trí tuệ nhân tạo.Người chơi có thể thi đấu với máy ở nhiều cấp độ khó khác nhau, từ dễ đến khó, hoặc với người chơi khác, hoặc có thể là cho máy đáu với máy.Dự án hỗ trợ trực quan hóa hiệu suất AI thông qua biểu đồ tỷ lệ thắng, giúp người dùng phân tích và so sánh các thuật toán.
 
-## Tính năng
+## Tính năng - Giao diện
 
 - **Chế độ chơi đa dạng**:
   - Người vs AI (nhiều cấp độ)
@@ -20,12 +20,21 @@ Game Caro AI là một dự án của nhóm 15 triển khai trò chơi cờ caro
     + Backtracking
     + And-Or Search
     + Q-Learning
+
+- **Giao diện người dùng thân thiện**:
+![Hình ảnh menu](https://i.imgur.com/tlb2S7I.png)
   
 - **Cài đặt tùy chỉnh**:
   - Điều chỉnh độ khó AI (Dễ, Trung bình, Khó)
-  - Lựa chọn lượt đi đầu (AI hoặc Người chơi) 
-## Yêu cầu hệ thống
+  - Lựa chọn lượt đi đầu (AI hoặc Người chơi)
+![Hình ảnh cài đặt](https://i.imgur.com/GmR4itz.png)
 
+
+- **Trực quan hóa**:
+  - Biểu đồ tròn hiển thị tỉ lệ thắng thua giữa các thuật toán AI
+  - So sánh hiệu suất giữa các thuật toán
+
+## Yêu cầu hệ thống
 - Python 3.7+
 - NumPy
 - PyTorch (cho phiên bản AI sử dụng deep learning)
