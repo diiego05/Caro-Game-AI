@@ -1,31 +1,29 @@
-# Game Caro AI
+# Game Caro AI - Nhóm 15
 
 ## Giới thiệu
 
-Game Caro AI là một dự án triển khai trò chơi cờ caro (Gomoku/Tic-tac-toe mở rộng) kết hợp với trí tuệ nhân tạo. Người chơi có thể thi đấu với máy ở nhiều cấp độ khó khác nhau, từ dễ đến khó, hoặc với người chơi khác.
+Game Caro AI là một dự án của nhóm 15 triển khai trò chơi cờ caro kết hợp với trí tuệ nhân tạo.Người chơi có thể thi đấu với máy ở nhiều cấp độ khó khác nhau, từ dễ đến khó, hoặc với người chơi khác, hoặc có thể là cho máy đáu với máy.Dự án hỗ trợ trực quan hóa hiệu suất AI thông qua biểu đồ tỷ lệ thắng, giúp người dùng phân tích và so sánh các thuật toán.
 
 ## Tính năng
 
 - **Chế độ chơi đa dạng**:
   - Người vs AI (nhiều cấp độ)
   - Người vs Người (cùng máy tính)
-  - Chế độ trực tuyến (đấu với người chơi khác)
+  - Ai vs Ai (tụ do chọn thuật toán)
 
 - **Trí tuệ nhân tạo thông minh**:
-  - Sử dụng thuật toán Minimax với cắt tỉa Alpha-Beta
-  - Hỗ trợ thuật toán Monte Carlo Tree Search (MCTS)
-  - AI tự học và thích nghi qua các ván đấu
-
-- **Bàn cờ tùy chỉnh**:
-  - Kích thước bàn cờ linh hoạt (15x15, 19x19, tùy chỉnh)
-  - Luật chơi đa dạng (cờ caro thông thường, luật Gomoku quốc tế)
-
-- **Tính năng bổ sung**:
-  - Lưu và tải ván đấu
-  - Phát lại các nước đi
-  - Thống kê và xếp hạng
-  - Gợi ý nước đi tốt nhất
-
+  - Dùng nhiều thuật toán AI đa dạng: 
+    + Genetic Algorithm
+    + Simulated Annealing
+    + Stochastic Hill Climbing
+    + Uniform Cost Search
+    + Backtracking
+    + And-Or Search
+    + Q-Learning
+  
+- **Cài đặt tùy chỉnh**:
+  - Điều chỉnh độ khó AI (Dễ, Trung bình, Khó)
+  - Lựa chọn lượt đi đầu (AI hoặc Người chơi) 
 ## Yêu cầu hệ thống
 
 - Python 3.7+
