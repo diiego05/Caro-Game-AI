@@ -132,10 +132,12 @@ class GameMenu:
         about_font = pygame.font.Font(None, 32)
         about_lines = [
             "Caro Game - AI Project",
-            "Version 1.0",
-            "Developed by Group 12",
+            "Developed by Group 15",
             "Artificial Intelligence Course",
-            "",
+            "Members:",
+            "1. Nguyen Duy Cuong - 23110189",
+            "2. Nguyen Thanh Tin - 23110340",
+            "3. Lam Van Di - 23110191",
             "Click anywhere to return"
         ]
         

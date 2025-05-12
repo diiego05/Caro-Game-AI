@@ -28,7 +28,7 @@ COLNUM = 20
 winning_condition = 5
 
 is_developer_mode = False
-# is_developer_mode = True
+
 
 dev_mode_setup = {
     'ai_1': 'X',
@@ -295,8 +295,8 @@ def run_main_game(my_game):
         path + '/ai_thinking_gray.png').convert_alpha(), (105, 105))
     icon_img = pygame.transform.smoothscale(pygame.image.load(
         path + '/old/icon.jpg').convert_alpha(), (20, 20))
-    logo_img = pygame.transform.smoothscale(pygame.image.load(
-        path + '/logo.jpg').convert_alpha(), (240, 105))
+    # logo_img = pygame.transform.smoothscale(pygame.image.load(
+    #     path + '/logo.jpg').convert_alpha(), (240, 105))
 
     start_button = button.Button(970, 200, start_img, start_img, 0.8)
     replay_button = button.Button(970, 575, replay_img, replay_img, 0.8)
@@ -547,7 +547,12 @@ def run_main_game(my_game):
                 if aivai_btn.draw(Screen):
                     # Display combo boxes to select algorithms for AI 1 and AI 2
                     
-
+                    my_game.use_ai(True)
+                    aivai_btn.disable_button()
+                    aivp_btn.enable_button()
+                    pvp_btn.enable_button()
+                    aivai_btn.re_draw(Screen)  # Thêm: Vẽ lại nút để hiển thị hình ảnh xám
+                    pygame.display.update()
                     from PIL import Image, ImageTk
 
                     root = tk.Tk()
@@ -615,10 +620,7 @@ def run_main_game(my_game):
                     if ai_2_algorithm not in valid_algorithms:
                         ai_2_algorithm = "greedy"
 
-                    my_game.use_ai(True)
-                    aivai_btn.disable_button()
-                    aivp_btn.enable_button()
-                    pvp_btn.enable_button()
+                    
                     dev_mode_setup['start'] = True
                     ai_thinking_btn.enable_button()
                     agent1 = Agent(
