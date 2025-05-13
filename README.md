@@ -9,7 +9,7 @@ Game Caro AI là một dự án của nhóm 15 triển khai trò chơi cờ caro
 - **Chế độ chơi đa dạng**:
   - Người vs AI (nhiều cấp độ)
   - Người vs Người (cùng máy tính)
-  - Ai vs Ai (tụ do chọn thuật toán)
+  - Ai vs Ai (tự do chọn thuật toán)
 
 - **Trí tuệ nhân tạo thông minh**:
   - Dùng nhiều thuật toán AI đa dạng: 
@@ -22,14 +22,12 @@ Game Caro AI là một dự án của nhóm 15 triển khai trò chơi cờ caro
     + Q-Learning
 
 - **Giao diện người dùng thân thiện**:
-  - Hình ảnh menu
-![Hình ảnh menu](https://i.imgur.com/tlb2S7I.png)
+  - Điều chỉnh độ khó AI (Dễ, Trung bình, Khó)
+  - Lựa chọn lượt đi đầu (AI hoặc Người chơi)
+![Hình ảnh menu](https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdXllZWl1b2pnMjhsN25wOG5pd2pzbjBxOWd1YXN0YmNobzE1ajBsbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/P4b57XRZ2YUOJ2u9or/giphy.gif)
 
   - Hình ảnh giao diện game
   
-- **Cài đặt tùy chỉnh**:
-  - Điều chỉnh độ khó AI (Dễ, Trung bình, Khó)
-  - Lựa chọn lượt đi đầu (AI hoặc Người chơi)
 ![Hình ảnh cài đặt](https://i.imgur.com/GmR4itz.png)
 
 
