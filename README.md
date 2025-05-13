@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/d26b5428-e067-4936-9589-26b97658b8f4)# Game Caro AI - Nhóm 15
+# Game Caro AI - Nhóm 15
 
 ## Giới thiệu
 
