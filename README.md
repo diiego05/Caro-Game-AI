@@ -39,7 +39,7 @@ Game Caro AI là một dự án của nhóm 15 triển khai trò chơi cờ caro
 - **Trực quan hóa**:
   - Biểu đồ tròn hiển thị tỉ lệ thắng thua giữa các thuật toán AI
   - So sánh hiệu suất giữa các thuật toán
-  ![Hiệu suất thuật toán](https://github.com/user-attachments/assets/bda24261-5a0e-44da-92e2-157940ab6ff1)
+  ![Hiệu suất thuật toán](https://github.com/user-attachments/assets/c4d401bd-5deb-4d33-af45-99055e1bd841)
 
 
 ## Hưỡng dẫn chơi
@@ -68,6 +68,7 @@ caro-ai-game/
 ## Đội ngũ phát triển
 
 **Nhóm 14 - Trí Tuệ Nhân Tạo**
+
 **Thành viên**:
   - Nguyễn Duy Cường - 23110189
   - Nguyễn Thành Tin - 23110340
