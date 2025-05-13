@@ -1,4 +1,4 @@
-# Game Caro AI - Nhóm 15
+![image](https://github.com/user-attachments/assets/d26b5428-e067-4936-9589-26b97658b8f4)# Game Caro AI - Nhóm 15
 
 ## Giới thiệu
 
@@ -27,13 +27,19 @@ Game Caro AI là một dự án của nhóm 15 triển khai trò chơi cờ caro
   
   - ![Giao diện menu](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMzZ1djk4ejkxZjJtZms5bzFuZnBuZHRsaXV0aGtzcnV1cmZrZ3ppMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/bKhSNCiacGIipyIY9f/giphy.gif)
 
-  - Chọn chế độ chơi: Người vs Người
+  - Chế độ chơi: Người vs Người
   - ![Người vs Người](https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExYW12OHM1cXh6OXN3cTBtM2ptdDMxcmQ0b28zdHlndnF1Y2w3dXJzaCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/iATf6JY9q5srhFi39r/giphy.gif)
 
+  - Chế độ chơi: Người vs AI
+  - ![Người vs AI](https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmZndGJhNXl6bDFzeTVxYjluamU3eXFteHZjZDNoaHB0OXlsbWFobSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1q23tkZhpdGtBucVuf/giphy.gif)
+ 
+  - Chế độ chơi: AI vs AI (chọn nhiều thuật toán khác nhau cho 2 AI, dưới đây là chọn 2 thuật toán Greedy và Simulated Annealing)
+  - ![AI vs AI](https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExdXk3MTh4cDR0bzUzNWU1YTQ5Y2xlaGNzMWg4ZjludDMwaDR1N3N2eSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/NuJkH84UgzmfzQcGH3/giphy.gif)
 
 - **Trực quan hóa**:
   - Biểu đồ tròn hiển thị tỉ lệ thắng thua giữa các thuật toán AI
   - So sánh hiệu suất giữa các thuật toán
+  ![Hiệu suất thuật toán](https://github.com/user-attachments/assets/bda24261-5a0e-44da-92e2-157940ab6ff1)
 
 
 ## Hưỡng dẫn chơi
