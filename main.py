@@ -325,7 +325,7 @@ def run_main_game(my_game):
         pvp_btn.disable_button()
         start_button.enable_button()
 
-    pygame.display.set_caption('Caro game by nhóm 14 Trí tuệ nhân tạo')
+    pygame.display.set_caption('Caro game by nhóm 15 Trí tuệ nhân tạo')
     pygame.display.set_icon(icon_img)
 
     done = False
@@ -334,7 +334,7 @@ def run_main_game(my_game):
 
     def logo():
         font = pygame.font.Font('freesansbold.ttf', 36)
-        text = font.render('By AI - nhóm 14', True, WHITE, BLACK)
+        text = font.render('By AI - nhóm 15', True, WHITE, BLACK)
         textRect = text.get_rect()
         textRect.center = (1050, 700)
         Screen.blit(text, textRect)
