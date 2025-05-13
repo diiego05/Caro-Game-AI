@@ -45,8 +45,8 @@ Game Caro AI là một dự án của nhóm 15 triển khai trò chơi cờ caro
 ## Hưỡng dẫn chơi
 
 1. **Khởi động trò chơi**: Chạy file `main.py`
-2. **Chọn chế độ chơi**: Người vs AI, Người vs Người hoặc AI vs AI
-3. **Chọn cấp độ AI** (chơi với máy): Dễ, Trung bình, Khó
+2. **Chọn cấp độ AI** (chơi với máy): Dễ, Trung bình, Khó
+3. **Chọn chế độ chơi**: Người vs AI, Người vs Người hoặc AI vs AI
 4. **Luật chơi**: 
    - Người chơi đánh dấu X và O luân phiên nhau
    - Người thắng cuộc là người đầu tiên tạo được một hàng liên tiếp 5 quân (ngang, dọc hoặc chéo)
