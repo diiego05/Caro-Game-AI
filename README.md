@@ -67,7 +67,7 @@ caro-ai-game/
 
 ## Đội ngũ phát triển
 
-**Nhóm 14 - Trí Tuệ Nhân Tạo**
+**Nhóm 15 - Trí Tuệ Nhân Tạo**
 
 **Thành viên**:
   - Nguyễn Duy Cường - 23110189
