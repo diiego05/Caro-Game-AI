@@ -24,11 +24,11 @@ Game Caro AI là một dự án của nhóm 15 triển khai trò chơi cờ caro
 - **Giao diện người dùng thân thiện**:
   - Điều chỉnh độ khó AI (Dễ, Trung bình, Khó)
   - Lựa chọn lượt đi đầu (AI hoặc Người chơi)
-![Hình ảnh menu](https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdXllZWl1b2pnMjhsN25wOG5pd2pzbjBxOWd1YXN0YmNobzE1ajBsbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/P4b57XRZ2YUOJ2u9or/giphy.gif)
-
-  - Hình ảnh giao diện game
   
-![Hình ảnh cài đặt](https://i.imgur.com/GmR4itz.png)
+  - ![Giao diện menu](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMzZ1djk4ejkxZjJtZms5bzFuZnBuZHRsaXV0aGtzcnV1cmZrZ3ppMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/bKhSNCiacGIipyIY9f/giphy.gif)
+
+  - Chọn chế độ chơi: Người vs Người
+  - ![Người vs Người](https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExYW12OHM1cXh6OXN3cTBtM2ptdDMxcmQ0b28zdHlndnF1Y2w3dXJzaCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/iATf6JY9q5srhFi39r/giphy.gif)
 
 
 - **Trực quan hóa**:
